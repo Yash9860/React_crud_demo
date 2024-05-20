@@ -1,11 +1,12 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-
+const bodyParser = require('body-parser');
 
 const app = express()
 app.use(cors())
 app.use(express.json())
+app.use(bodyParser.json());
 
 const PORT = process.env.PORT || 8080
 
@@ -14,7 +15,7 @@ const PORT = process.env.PORT || 8080
 const schemaData = mongoose.Schema({
     name : String,
     email : String,
-    mobile : Number
+    mobile : String
 },{
     timestamps : true
 })
@@ -45,8 +46,8 @@ app.post("/create",async(req,res) => {
 
 app.put("/update",async(req,res) =>{
     console.log(req.body)
-    const { id,...rest} = req.body
-    const data = await userModel.updateOne({_id:id},rest)
+    const { _id, ...rest } = req.body;
+    const data = await userModel.updateOne({ _id: new mongoose.Types.ObjectId(_id) }, rest);
     res.send({success: true, message:"data updated successfully", data:data})
     // const id = req.body
 })
